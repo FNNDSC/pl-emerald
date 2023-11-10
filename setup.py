@@ -27,6 +27,7 @@ setup(
     url='https://github.com/FNNDSC/pl-emerald',
     packages=['emerald'],
     license='MIT',
+    install_requires=['chris_plugin'],
     package_data={
         'emerald': ['json_models/*', 'weights/*']
     },
