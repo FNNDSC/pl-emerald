@@ -3,5 +3,6 @@ MedPy==0.4.0
 scikit-image==0.19.3
 keras==2.11.0
 tensorflow==2.11.0
-tqdm==4.64.1
-numpy==1.24.1
+numpy~=1.23.4
+chris_plugin==0.3.1
+importlib-resources~=6.1.1

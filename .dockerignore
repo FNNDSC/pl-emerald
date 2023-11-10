@@ -1,0 +1,10 @@
+.git
+.mambaenv
+*.egg-info
+__pycache__
+
+.dockerignore
+Dockerfile
+
+/in
+/out

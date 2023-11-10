@@ -6,11 +6,8 @@ import abc
 import numpy as np
 import sys, os
 
-bundle_dir = None
-if getattr(sys, 'frozen', False):
-    bundle_dir = sys._MEIPASS
-else:
-    sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from importlib_resources import files
+
 
 class MaskingModel(metaclass=abc.ABCMeta):
     '''abstract class to guarantee children will
@@ -27,16 +24,10 @@ class Unet(MaskingModel):
     def __init__(self):
         '''Class constructor get json model and h5 weigths and load model'''
 
-        if bundle_dir:
-            weight_path = os.path.join(bundle_dir, 'models/weights/emerald_weights.h5')
-            model_path = os.path.join(bundle_dir, 'models/json_models/emerald_model.json')
-        else:
-            weight_path = 'models/weights/emerald_weights.h5'
-            model_path = 'models/json_models/emerald_model.json'
+        weight_path = str(files(f'{__package__}.weights').joinpath('emerald_weights.h5'))
+        model_path = files(f'{__package__}.json_models').joinpath('emerald_model.json')
 
-        json_file = open(model_path, 'r')
-        json_model = json_file.read()
-        json_file.close()
+        json_model = model_path.read_text()
 
         self.unet_model = model_from_json(json_model)
         self.unet_model.load_weights(weight_path)

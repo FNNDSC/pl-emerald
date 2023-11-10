@@ -1,23 +1,8 @@
 # Automatic Brain Masking
 
-## Table of contents
-
-* [Description](#description)
-* [Requirements](#requirements)
-* [Limitations](#limitations)
-* [Usage](#usage)
-* [Setup](#setup)
-
 ## Description
 
-Deep learning based project made to automatically mask fetal brains. It can take either individual NIfTI files or the contents
-of a specified directory.
-
-Currently only a U-net based model is available.
-
-Depending on the input provided (a file or a directory), this tool will look for all .nii files inside of a folder. 
-It will save a new mask with the name name_mask.nii for each .nii file found on the path provided. and it 
-will skip those files that end with mask.nii unless specified otherwise with the --remasking flag.
+Deep learning based project made to automatically mask fetal brains.
 
 ### About this model
 
@@ -32,87 +17,23 @@ Here are some images showcasing its performance against the previous model, wher
 
 ![image2](image2.png)
 
-
-## Requirements
-
-- Python 3
-- pip
-
-The following can be installed with the requirements.txt file:
-
-- opencv-python-headless == 4.7.0.68
-- MedPy == 0.4.0
-- scikit-image == 0.19.3
-- keras == 2.11.0
-- tensorflow == 2.11.0
-- tqdm == 4.64.1
-- numpy == 1.24.1
-
 ## Usage
 
-Its recommended that you create a virtual environment to prevent mixing dependencies. If you don't know how to create one,
-check out the [setup](#setup) section.
+`pl-emerald` is available as a _ChRIS_ plugin. You can either run it using the _ChRIS_ cloud GUI
+or locally on the command line. To use it locally, move input NIFTI files to a directory and then run
 
-Once you have a virtual environment with all the requirements installed, you can run this tool with the command:
-
-```python
-python individual_brain_mask.py  target_file [target_file ...] [-h] [--remasking] [--no-remasking] [--post-processing] \
-[--no-post-processing] [--match MATCH [MATCH ...]] [--dilation_footprint SHAPE SIZE] [--no-dilation]
+```shell
+apptainer run docker://ghcr.io/fnndsc/pl-emerald:latest emerald input/ output/
 ```
-                        
-Where:
-   
-|              Argument             | Description                                                                                                                                              |
-|:---------------------------------:|----------------------------------------------------------------------------------------------------------------------------------------------------------|
-|           `target_file`           | Input path. Required.                                                                                                                                    |
-|                `-h`               | Show help message and exit                                                                                                                               |
-|           `--remasking`           | Indicates that images already masked should be remasked, rewritting all **_mask.nii* files found. Defaults to  *false*.                                 |
-|          `--no-remasking`         | Indicates to skip images that end with **_mask.nii*                                                                                                      |
-|        `--post-processing`        | Indicates that the predicted mask should be post processed (morphological closing and dilation). Defaults to  *true*.                                    |
-|       `--no-post-processing`      | Indicates that the predicted mask should *not* be post processed                                                                                         |
-|             `--match`             | Specify if only files with certain words should be masked. Not case sensitive.                                                                           |
-| `--dilation_footprint SHAPE SIZE` | Specify the shape and size of the footprint used for dilation. Shapes available are  **disk** and **square**. If none specified, default is **disk 2**. |
-|         `--no-dilation`           | Masks without dilation.                                                                                                                                  |
 
 ## Limitations
+
 - Unet can currently only work with 256x256 images
 
-## Setup
+## CPU v.s. GPU performance
 
-You can create a new virtual environment using the `venv` command:
-
-```python
-python -m venv /path/env_name
-```
-    
-This will create a virtual environment called `env_name` in the directory `/path`.
-To activate it, run:
-
-```python
-source /path/env_name/bin/activate
-```
-
-The environments name should appear at the beginnig of the shell surrounded by parentheses, like this:
-
-```python
-(env_name)$
-```
-    
-For further information on how virtual envirionments work, check the [python documentation](https://docs.python.org/3/library/venv.html).
-    
-### Download the tool
-
-Download the source code, cd into your desired location
-
-```python
-(env_name)$ git clone https://github.com/sofia-urosa/brain-masking.git
-(env_name)$ cd brain-masking
-```
-
-Install requirements from requirements.txt
-
-```python
-(env_name)$ pip install -r requirements.txt
-```
-    
- And run the tool using the command found in [usage](#usage).
+Quick notes about CPU v.s. GPU performance.
+To process 5 input files takes ~17s on CPU, ~6s on GPU.
+This includes the boot time of the program (loading models) however it does not include
+the time it takes to pull and/or process the container image.
+The TensorFlow base image is 437.67 MB in size, or 2.67 GB in size with Nvidia drivers.
