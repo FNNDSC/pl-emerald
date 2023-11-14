@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List, Tuple
 
 import cv2
 import numpy as np
@@ -97,7 +97,8 @@ def __postProcessing(mask, no_dilation, footprint):
     return pred_mask
 
 
-def emerald(model: Unet, input_path: str, output_path: Path, post_processing: bool, footprint: Optional[npt.NDArray]):
+def emerald(model: Unet, input_path: str, mask_path: Optional[Path], brain_paths: List[Tuple[float, Path]],
+            post_processing: bool, footprint: Optional[npt.NDArray]):
     img_path = str(input_path)
 
     img, hdr = getImageData(img_path)
@@ -114,6 +115,7 @@ def emerald(model: Unet, input_path: str, output_path: Path, post_processing: bo
         res = __postProcessing(res, no_dilation=(footprint is not None), footprint=footprint)
 
     if resizeNeeded:
+        # jennings to sofia: why np.float32 instead of uint8?
         res = __resizeData(res.astype(np.float32), target = original_shape)
 
     #remove extra dimension
@@ -123,4 +125,17 @@ def emerald(model: Unet, input_path: str, output_path: Path, post_processing: bo
     res = np.moveaxis(res, 0, -1)
 
     #save result
-    save(res, str(output_path), hdr)
+    if mask_path:
+        save(res, str(mask_path), hdr)
+
+    if brain_paths:
+        # for whatever reason, img.shape=(38, 256, 256, 1).
+        if len(img.shape) == 4 and img.shape[3] == 1:
+            img = np.squeeze(img)
+            img = np.moveaxis(img, 0, -1)
+
+    # apply res mask to img
+    for mult, brain_path in brain_paths:
+        print(f'img.shape={img.shape}, res.shape={res.shape}')
+        overlayed_data = np.clip(res, mult, 1.0) * img
+        save(overlayed_data, str(brain_path), hdr)

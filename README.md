@@ -26,6 +26,24 @@ or locally on the command line. To use it locally, move input NIFTI files to a d
 apptainer run docker://ghcr.io/fnndsc/pl-emerald:latest emerald input/ output/
 ```
 
+To create masks next to the original file, with the names `*_mask.nii`:
+
+```shell
+apptainer run docker://ghcr.io/fnndsc/pl-emerald:latest emerald --mask-suffix _mask.nii input/ input/
+```
+
+To extract brains without keeping the mask file:
+
+```shell
+apptainer run docker://ghcr.io/fnndsc/pl-emerald:latest emerald --mask-suffix '' --outputs '0:.nii' input/ output/
+```
+
+To create output masks, extracted brains, and masks overlayed on the original with dimmed background (for convenient visualization):
+
+```shell
+apptainer run docker://ghcr.io/fnndsc/pl-emerald:latest emerald --mask-suffix '_mask.nii' --outputs '0.0:_brain.nii,0.2:_overlay02.nii' input/ output/
+```
+
 ## Limitations
 
 - Unet can currently only work with 256x256 images
