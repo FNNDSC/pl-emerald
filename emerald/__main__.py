@@ -11,6 +11,11 @@ from emerald.emerald import emerald
 from emerald.model import Unet
 from skimage.morphology import square, disk, cube
 
+import time
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 __AVAILABLE_FUNCTIONS = [square, disk, cube]
 """Functions which (might) get called by eval."""
@@ -49,7 +54,11 @@ def main(options: Namespace, inputdir: Path, outputdir: Path):
     for input_file, output_file in mapper:
         mask_path = change_suffix(output_file, options.mask_suffix)
         brain_path = [(n, change_suffix(output_file, s)) for n, s in outputs]
+        start = time.monotonic()
         emerald(model, input_file, mask_path, brain_path, options.post_processing, footprint)
+        end = time.monotonic()
+        elapsed = end - start
+        logger.info(f'{input_file} -> {mask_path}, {[str(p) for _, p in brain_path]} (took {elapsed:.1f}s)')
 
 
 def change_suffix(path: Path, suffix: Optional[str]) -> Optional[Path]:
