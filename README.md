@@ -1,5 +1,9 @@
 # Automatic Brain Masking
 
+[![GitHub tag](https://img.shields.io/github/v/tag/FNNDSC/pl-emerald?filter=v*.*.*&label=version)](https://github.com/FNNDSC/pl-emerald/pkgs/container/pl-emerald)
+[![MIT License](https://img.shields.io/github/license/fnndsc/pl-emerald)](https://github.com/FNNDSC/pl-emerald/blob/master/LICENSE)
+[![ci](https://github.com/FNNDSC/pl-emerald/actions/workflows/ci.yml/badge.svg)](https://github.com/FNNDSC/pl-emerald/actions/workflows/ci.yml)
+
 ## Description
 
 Deep learning based project made to automatically mask fetal brains.

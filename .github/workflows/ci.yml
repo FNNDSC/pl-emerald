@@ -1,12 +1,4 @@
-# Continuous integration testing for ChRIS Plugin.
-# https://github.com/FNNDSC/python-chrisapp-template/wiki/Continuous-Integration
-#
-# - on push and PR: run pytest
-# - on push to main: build and push container images as ":latest"
-# - on push to semver tag: build and push container image with tag and
-#                          upload plugin description to https://chrisstore.co
-
-name: build
+name: ci
 
 on:
   push:
@@ -76,6 +68,55 @@ jobs:
           load: true
           cache-from: type=gha
 
+      - name: Download example data
+        run: ./download_example_data.sh example_data_dir/
+      - name: Run examples
+        id: run_examples
+        run: |
+          mkdir /tmp/outgoing
+          docker run --rm -u "$(id -u):$(id -g)" \
+            -v "${{ github.workspace }}/example_data_dir/data:/incoming:ro" \
+            -v "/tmp/outgoing:/outgoing:rw" \
+            ${{ steps.info.outputs.local_tag }} \
+            emerald --mask-suffix '_mask.nii' --outputs '0.0:_brain.nii,0.2:_overlay02.nii' /incoming /outgoing
+      - name: Assert example outputs are found
+        run: |
+          expected_outputs=(
+            /tmp/outgoing/stack-1_brain.nii
+            /tmp/outgoing/stack-1_mask.nii
+            /tmp/outgoing/stack-1_overlay02.nii
+            /tmp/outgoing/stack-2_brain.nii
+            /tmp/outgoing/stack-2_mask.nii
+            /tmp/outgoing/stack-2_overlay02.nii
+            /tmp/outgoing/stack-3_brain.nii
+            /tmp/outgoing/stack-3_mask.nii
+            /tmp/outgoing/stack-3_overlay02.nii
+            /tmp/outgoing/stack-4_brain.nii
+            /tmp/outgoing/stack-4_mask.nii
+            /tmp/outgoing/stack-4_overlay02.nii
+            /tmp/outgoing/stack-5_brain.nii
+            /tmp/outgoing/stack-5_mask.nii
+            /tmp/outgoing/stack-5_overlay02.nii
+            /tmp/outgoing/stack-6_brain.nii
+            /tmp/outgoing/stack-6_mask.nii
+            /tmp/outgoing/stack-6_overlay02.nii
+            /tmp/outgoing/stack-7_brain.nii
+            /tmp/outgoing/stack-7_mask.nii
+            /tmp/outgoing/stack-7_overlay02.nii
+            /tmp/outgoing/stack-8_brain.nii
+            /tmp/outgoing/stack-8_mask.nii
+            /tmp/outgoing/stack-8_overlay02.nii
+          )
+
+          for expected_output in "${expected_outputs[@]}"; do
+            if ! [ -f "$expected_output" ]; then
+              echo "expected $expected_output to be a file, but it does not."
+              parent_dir="$(dirname "$expected_output")"
+              set -ex
+              ls -lh "$parent_dir"
+              exit 1
+            fi
+          done
       - name: Login to DockerHub
         if: (github.event_name == 'push' || github.event_name == 'release') && contains(steps.info.outputs.tags_csv, 'docker.io')
         uses: docker/login-action@v3
