@@ -127,7 +127,7 @@ def emerald(model: Unet, input_path: str, mask_path: Optional[Path], brain_paths
 
     #save result
     if mask_path:
-        save(res, str(mask_path), hdr)
+        save(res.astype(np.float32), str(mask_path), hdr)
 
     if brain_paths:
         # for whatever reason, img.shape=(38, 256, 256, 1).
