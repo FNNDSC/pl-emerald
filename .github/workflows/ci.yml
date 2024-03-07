@@ -50,7 +50,7 @@ jobs:
               for k, v in outputs.items():
                   out.write(f'{k}={v}\n')
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
         with:
           driver-opts: network=host
@@ -59,7 +59,7 @@ jobs:
         # The first build pushes to our local registry for testing.
         # The second build pushes to Docker Hub and ghcr.io 
       - name: Build (local only)
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v5
         id: docker_build
         with:
           context: .
@@ -131,7 +131,7 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v5
         if: (github.event_name == 'push' || github.event_name == 'release')
         with:
           context: .
