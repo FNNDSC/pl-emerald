@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import Optional, List, Tuple
+import logging
 
 import cv2
 import numpy as np
@@ -9,6 +10,8 @@ from skimage.measure import label
 from skimage.morphology import binary_closing, binary_dilation, cube
 
 from emerald.model import Unet
+
+logger = logging.getLogger(__name__)
 
 
 def getImageData(fname):
@@ -118,6 +121,11 @@ def emerald(model: Unet, input_path: str, mask_path: Optional[Path], brain_paths
     if resizeNeeded:
         # jennings to sofia: why np.float32 instead of uint8?
         res = __resizeData(res.astype(np.float32), target = original_shape)
+
+    # some type duct tape
+    if str(res.dtype) == 'bool':
+        logger.warning(f'Brain not found in {input_path}')
+        res = res.astype(np.float32)
 
     #remove extra dimension
     res = np.squeeze(res)
