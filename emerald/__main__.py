@@ -41,7 +41,8 @@ parser.add_argument('--dilation-footprint', default='disk(2)', type=str,
     category='MRI',
     min_memory_limit='2Gi',      # supported units: Mi, Gi
     min_cpu_limit='1000m',       # millicores, e.g. "1000m" = 1 CPU core
-    min_gpu_limit=0              # set min_gpu_limit=1 to enable GPU
+    min_gpu_limit=0,             # set min_gpu_limit=1 to enable GPU
+    max_gpu_limit=1
 )
 def main(options: Namespace, inputdir: Path, outputdir: Path):
     print(DISPLAY_TITLE, flush=True)
