@@ -1,4 +1,4 @@
-FROM docker.io/tensorflow/tensorflow:2.11.0
+FROM docker.io/tensorflow/tensorflow:2.11.0-gpu
 
 COPY requirements.txt /app/requirements.txt
 RUN --mount=type=cache,target=/root/.cache,sharing=private pip install -r /app/requirements.txt
