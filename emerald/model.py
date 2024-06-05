@@ -6,6 +6,7 @@ import abc
 import numpy as np
 import sys, os
 
+import typing
 from importlib_resources import files
 
 
@@ -21,7 +22,7 @@ class Unet(MaskingModel):
     '''Unet class to manage the loding of model and weights and
     predictive use'''
 
-    def __init__(self):
+    def __init__(self, model_name: typing.Literal['emerald', 'nancy']):
         '''Class constructor get json model and h5 weigths and load model'''
 
         weight_path = str(files(f'{__package__}.weights').joinpath('emerald_weights.h5'))

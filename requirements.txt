@@ -1,8 +1,14 @@
 opencv-python-headless==4.7.0.68
 MedPy==0.4.0
 scikit-image==0.19.3
-keras==2.11.0
-tensorflow==2.11.0
-numpy~=1.23.4
 chris_plugin==0.3.1
 importlib-resources~=6.1.1
+
+# numpy and keras are included in tensorflow/tensorflow images from Docker Hub.
+keras==2.11.0
+numpy~=1.23.4
+
+# tensorflow requirement is not specified here, so either tensorflow or tensorflow-gpu
+# can be provided by the base image.
+# tensorflow==2.11.0
+# tensorflow-gpu==2.11.0

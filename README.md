@@ -52,10 +52,13 @@ apptainer run docker://ghcr.io/fnndsc/pl-emerald:latest emerald --mask-suffix '_
 
 - Unet can currently only work with 256x256 images
 
-## CPU v.s. GPU performance
+## CPU v.s. GPU
 
-Quick notes about CPU v.s. GPU performance.
-To process 5 input files takes ~17s on CPU, ~6s on GPU.
+`pl-emerald` works perfectly fine on the CPU, however it is hard-coded to use GPUs in _ChRIS_.
+
+On a high-end machine, processing 5 input files takes ~17s on CPU, ~6s on GPU.
 This includes the boot time of the program (loading models) however it does not include
 the time it takes to pull and/or process the container image.
 The TensorFlow base image is 437.67 MB in size, or 2.67 GB in size with Nvidia drivers.
+
+On lower-end hardware, it can take almost 300s to process a single input file using CPU.

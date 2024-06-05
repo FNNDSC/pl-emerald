@@ -29,6 +29,8 @@ parser.add_argument('-m', '--mask-suffix', type=str, default='_mask.nii',
                     help='Mask output file suffix. Provide "" to not save mask.')
 parser.add_argument('-o', '--outputs', type=str, default='',
                     help='Background intensity multiplier and output suffix.')
+parser.add_argument('-w', '--weights', type=str, default='nancy', choices=['nancy', 'emerald'],
+                    help='Which weights to use. ("nancy" is newer and better)')
 parser.add_argument('--no-post-processing', dest='post_processing', action='store_false',
                     help='Predicted mask should not be post processed (morphological closing and defragmentation)')
 parser.add_argument('--dilation-footprint', default='disk(2)', type=str,
@@ -41,13 +43,13 @@ parser.add_argument('--dilation-footprint', default='disk(2)', type=str,
     category='MRI',
     min_memory_limit='2Gi',      # supported units: Mi, Gi
     min_cpu_limit='1000m',       # millicores, e.g. "1000m" = 1 CPU core
-    min_gpu_limit=0,             # set min_gpu_limit=1 to enable GPU
+    min_gpu_limit=1,
     max_gpu_limit=1
 )
 def main(options: Namespace, inputdir: Path, outputdir: Path):
     print(DISPLAY_TITLE, flush=True)
-
-    model = Unet()
+    logger.info(f'using the "{options.weights}" weights')
+    model = Unet(options.weights)
     footprint = eval(options.dilation_footprint)
     outputs = parse_outputs(options.outputs)
 
