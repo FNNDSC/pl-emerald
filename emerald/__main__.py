@@ -41,7 +41,7 @@ parser.add_argument('--dilation-footprint', default='disk(2)', type=str,
     parser=parser,
     title='Fetal brain masking',
     category='MRI',
-    min_memory_limit='2Gi',      # supported units: Mi, Gi
+    min_memory_limit='6Gi',      # supported units: Mi, Gi
     min_cpu_limit='1000m',       # millicores, e.g. "1000m" = 1 CPU core
     min_gpu_limit=1,
     max_gpu_limit=1
